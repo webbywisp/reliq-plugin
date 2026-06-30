@@ -1,0 +1,19 @@
+{
+  "name": "reliq",
+  "owner": {
+    "name": "Reliq",
+    "email": "webbywisp@gmail.com"
+  },
+  "description": "Reliq — your personal memory for Claude Code. Install the reliq plugin to connect Claude Code to the Reliq MCP memory substrate, load your context at session start, and capture each coding session automatically.",
+  "plugins": [
+    {
+      "name": "reliq",
+      "source": "./plugins/reliq",
+      "description": "Connect Claude Code to Reliq (your personal memory): MCP connector + session hooks (context-load + deterministic git capture) + a skill that reads and writes your memory automatically.",
+      "version": "0.1.0",
+      "homepage": "https://github.com/webbywisp/reliq-plugin",
+      "license": "MIT",
+      "keywords": ["reliq", "memory", "second-brain", "mcp", "context"]
+    }
+  ]
+}

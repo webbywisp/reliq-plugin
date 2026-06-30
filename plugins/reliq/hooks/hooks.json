@@ -1,0 +1,32 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/reliq",
+            "args": ["context"],
+            "timeout": 20,
+            "statusMessage": "Loading your Reliq context"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/reliq",
+            "args": ["capture"],
+            "timeout": 20,
+            "statusMessage": "Capturing this session to Reliq"
+          }
+        ]
+      }
+    ]
+  }
+}

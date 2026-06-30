@@ -1,0 +1,14 @@
+{
+  "name": "reliq",
+  "displayName": "Reliq",
+  "version": "0.1.0",
+  "description": "Connect Claude Code to Reliq, your personal memory. Bundles the Reliq MCP connector, session hooks that load your context and capture each coding session, and a skill that tells the agent to read and write your memory automatically.",
+  "author": {
+    "name": "Reliq",
+    "url": "https://github.com/webbywisp/reliq"
+  },
+  "homepage": "https://github.com/webbywisp/reliq",
+  "repository": "https://github.com/webbywisp/reliq",
+  "license": "MIT",
+  "keywords": ["reliq", "memory", "second-brain", "mcp", "context"]
+}

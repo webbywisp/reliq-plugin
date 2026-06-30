@@ -1,0 +1,20 @@
+{
+  "name": "@reliq/cli",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "reliq CLI — auth + deterministic capture engine behind the Reliq Claude Code plugin hooks.",
+  "bin": {
+    "reliq": "../bin/reliq"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8"
+  }
+}
