@@ -103,15 +103,24 @@ export function resolveSettings(env = process.env) {
   let token = null;
   let tokenSource = "none";
   let expiresAt = null;
+  let refreshToken = null;
+  let clientId = null;
+  let tokenEndpoint = null;
+  let resource = null;
   if (creds && creds.token) {
     token = creds.token;
     tokenSource = "credentials";
     expiresAt = creds.expiresAt ?? null;
+    refreshToken = creds.refreshToken ?? null;
+    clientId = creds.clientId ?? null;
+    tokenEndpoint = creds.tokenEndpoint ?? null;
+    resource = creds.resource ?? null;
   }
   if (env.RELIQ_TOKEN) {
     token = env.RELIQ_TOKEN;
     tokenSource = "env";
     expiresAt = null; // env tokens carry no expiry metadata
+    refreshToken = null;
   }
 
   // Repo allowlist: env (':'-separated, matching the bash prototype) or config.
@@ -127,6 +136,10 @@ export function resolveSettings(env = process.env) {
     token,
     tokenSource,
     expiresAt,
+    refreshToken,
+    clientId,
+    tokenEndpoint,
+    resource,
     allowlist,
     credentialsPath: credentialsPath(),
   };

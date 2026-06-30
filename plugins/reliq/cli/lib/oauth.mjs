@@ -114,9 +114,31 @@ export async function exchangeCode(meta, { clientId, code, codeVerifier, redirec
   return tok;
 }
 
+/** Exchange a refresh token for a new access token at /token (RFC 6749 §6). */
+export async function refreshAccessToken(tokenEndpoint, { clientId, refreshToken, resource }) {
+  const form = new URLSearchParams({
+    grant_type: "refresh_token",
+    refresh_token: refreshToken,
+    client_id: clientId,
+  });
+  if (resource) form.set("resource", resource);
+  const res = await httpJson(tokenEndpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded", Accept: "application/json" },
+    body: form.toString(),
+  });
+  if (res.status < 200 || res.status >= 300) {
+    throw new Error(`token refresh failed (HTTP ${res.status}): ${res.body.slice(0, 200)}`);
+  }
+  const tok = tryParseJson(res.body);
+  if (!tok || !tok.access_token) throw new Error("refresh response missing access_token");
+  return tok;
+}
+
 /**
  * Run the full loopback OAuth flow. Returns a credentials record:
- *   { token, refreshToken, endpoint, expiresAt, scope, obtainedVia }
+ *   { token, refreshToken, endpoint, expiresAt, scope, tokenEndpoint, resource,
+ *     clientId, obtainedVia }
  * `openBrowser` is injectable (defaults to a best-effort OS open).
  */
 export async function loopbackLogin(endpoint, { openBrowser, timeoutMs = 180_000 } = {}) {
@@ -164,6 +186,8 @@ export async function loopbackLogin(endpoint, { openBrowser, timeoutMs = 180_000
       expiresAt,
       scope: tok.scope ?? CLI_SCOPES,
       clientId: reg.client_id,
+      tokenEndpoint: meta.token_endpoint,
+      resource: meta.resource || base,
       obtainedVia: "oauth-loopback",
     };
   } finally {

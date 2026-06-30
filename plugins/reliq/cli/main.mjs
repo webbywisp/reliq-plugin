@@ -12,7 +12,7 @@ import {
   tokenPrefix,
   DEFAULT_ENDPOINT,
 } from "./lib/config.mjs";
-import { loopbackLogin } from "./lib/oauth.mjs";
+import { loopbackLogin, refreshAccessToken, discover } from "./lib/oauth.mjs";
 import { httpJson, mcpToolsCall } from "./lib/http.mjs";
 import {
   parseHookInput,
@@ -31,6 +31,56 @@ function log(msg) {
 }
 function out(obj) {
   process.stdout.write(JSON.stringify(obj) + "\n");
+}
+
+// OAuth access tokens are short-lived (~1hr); refresh proactively this far
+// ahead of expiry so a hook never runs on a token that's about to 401.
+const REFRESH_MARGIN_MS = 60_000;
+
+/**
+ * If the cached access token is missing/near its expiry and a refresh token
+ * is on hand, silently exchange it for a fresh one and persist it. Best
+ * effort: any failure returns the settings unchanged, so callers fall
+ * through to their existing fail-safe behavior (an expired/invalid token).
+ */
+async function ensureFreshToken(s) {
+  if (!s.token || !s.refreshToken || !s.clientId) return s;
+  if (!s.expiresAt || s.expiresAt - Date.now() > REFRESH_MARGIN_MS) return s;
+  try {
+    // Credentials cached before tokenEndpoint/resource were persisted (older
+    // CLI versions) lack them — rediscover once rather than forcing a re-login.
+    let tokenEndpoint = s.tokenEndpoint;
+    let resource = s.resource;
+    if (!tokenEndpoint) {
+      const meta = await discover(s.endpoint);
+      tokenEndpoint = meta.token_endpoint;
+      resource = meta.resource || s.endpoint;
+    }
+    const tok = await refreshAccessToken(tokenEndpoint, {
+      clientId: s.clientId,
+      refreshToken: s.refreshToken,
+      resource,
+    });
+    const expiresAt =
+      typeof tok.expires_in === "number" ? Date.now() + tok.expires_in * 1000 : null;
+    writeCredentials({
+      token: tok.access_token,
+      refreshToken: tok.refresh_token ?? s.refreshToken,
+      endpoint: s.endpoint,
+      expiresAt,
+      scope: tok.scope ?? null,
+      clientId: s.clientId,
+      tokenEndpoint,
+      resource,
+      obtainedVia: "oauth-refresh",
+      savedAt: new Date().toISOString(),
+    });
+    log("access token refreshed");
+    return resolveSettings();
+  } catch (e) {
+    log(`token refresh failed (${e.message}) — continuing with existing token`);
+    return s;
+  }
 }
 
 /** Validate a PAT/access token by calling get_context with a tiny budget. */
@@ -193,6 +243,7 @@ async function cmdContext() {
       return 0;
     }
   }
+  s = await ensureFreshToken(s);
   try {
     const intent = hook.cwd ? `coding session in ${hook.cwd}` : "starting a coding session";
     const result = await mcpToolsCall(
@@ -224,7 +275,8 @@ async function cmdCapture(argv) {
     /* ignore */
   }
   const hook = parseHookInput(raw);
-  const s = resolveSettings();
+  let s = resolveSettings();
+  s = await ensureFreshToken(s);
 
   let record;
   try {
