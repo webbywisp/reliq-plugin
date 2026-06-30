@@ -10,7 +10,7 @@
       "name": "reliq",
       "source": "./plugins/reliq",
       "description": "Connect Claude Code to Reliq (your personal memory): MCP connector + session hooks (context-load + deterministic git capture) + a skill that reads and writes your memory automatically.",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "homepage": "https://github.com/webbywisp/reliq-plugin",
       "license": "MIT",
       "keywords": ["reliq", "memory", "second-brain", "mcp", "context"]
