@@ -10,5 +10,5 @@ Run the bundled Reliq CLI to check status:
 
 Report the result concisely: whether this device is logged in (`reliq login`
 completed), who it's authenticated as, and whether the CLI can reach the Reliq
-server (`https://reliq-mcp.fly.dev`). If it reports "not logged in", tell the
+server (`https://mcp.reliq.sh`). If it reports "not logged in", tell the
 user to run `/reliq:login`.

@@ -8,7 +8,7 @@ settings, paste rules files, or wire up hooks by hand.
 
 | Component | File | What it does |
 |---|---|---|
-| **MCP connector** | `.mcp.json` | Adds the Reliq MCP server (`https://reliq-mcp.fly.dev/mcp`, Streamable HTTP) as `reliq`, exposing `mcp__reliq__*` tools (`get_context`, `search_memory`, `get_person`, `remember`, `add_note`, `expand`, …) and the `reliq://context` resource. Auth is Claude Code's built-in **MCP OAuth** flow — no secret in the file. |
+| **MCP connector** | `.mcp.json` | Adds the Reliq MCP server (`https://mcp.reliq.sh/mcp`, Streamable HTTP) as `reliq`, exposing `mcp__reliq__*` tools (`get_context`, `search_memory`, `get_person`, `remember`, `add_note`, `expand`, …) and the `reliq://context` resource. Auth is Claude Code's built-in **MCP OAuth** flow — no secret in the file. |
 | **SessionStart hook** | `hooks/hooks.json` | Runs `bin/reliq context` when a session starts/resumes, which fetches your Reliq context and injects it (plus a "capture durable facts to Reliq as you go" directive) into the conversation via `additionalContext`. |
 | **SessionEnd hook** | `hooks/hooks.json` | Runs `bin/reliq capture` when a session ends, deriving a **deterministic git-based session record** (repo / branch / diffstat / commit subjects — never raw transcripts or file bodies) and POSTing it to Reliq. This is the no-inference backstop. |
 | **Skill** | `skills/reliq/SKILL.md` | Tells the agent it has Reliq as the user's memory: read context at session start, and proactively save durable decisions/conventions/gotchas via `remember` / `add_note` without being asked. |
@@ -90,3 +90,6 @@ no-ops; a changing diff each turn still produces multiple records. Prefer
   subjects) — never raw file contents or transcripts.
 - A repo allowlist and secret-redaction pass apply on the capture path (see the
   CLI's own docs).
+
+For full details on what Reliq collects and how it's handled, see the
+**[Reliq Privacy Policy](https://[reliq-domain]/privacy)**.

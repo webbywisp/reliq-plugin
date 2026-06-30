@@ -2,7 +2,7 @@
   "mcpServers": {
     "reliq": {
       "type": "http",
-      "url": "https://reliq-mcp.fly.dev/mcp"
+      "url": "https://mcp.reliq.sh/mcp"
     }
   }
 }

@@ -20,7 +20,7 @@ import {
   renameSync,
 } from "node:fs";
 
-export const DEFAULT_ENDPOINT = "https://reliq-mcp.fly.dev";
+export const DEFAULT_ENDPOINT = "https://mcp.reliq.sh";
 
 /** Directory holding all reliq CLI state. Override with RELIQ_HOME (tests). */
 export function reliqHome() {
